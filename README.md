@@ -1,10 +1,11 @@
-# How to mark test as Passed or Failed in Java JUnit with Appium on [LambdaTest](https://www.lambdatest.com/?utm_source=github&utm_medium=repo&utm_campaign=appium-junit-passfail)
+# How to handle permission pop-ups in Java JUnit with Appium on [LambdaTest](https://www.lambdatest.com/?utm_source=github&utm_medium=repo&utm_campaign=appium-junit-permissions)
 
-While performing app automation testing with appium on LambdaTest Grid, you may face a scenario where a test that you declared as fail in your local instance may turn out to be completed successfully at LambdaTest. Don't worry though! We understand how imperative it is to flag an app automation test as either "pass" or "fail" depending upon your testing requirement with respect to the validation of expected behaviour. You can refer to sample test repo [here](https://github.com/LambdaTest/LT-appium-java-junit).
+While performing app automation testing with appium on LambdaTest Grid, you may face a scenario where you would like to automatically handle permission pop-ups. You may choose to either accept all permission pop-ups or dismiss all of them. You can handle the case as mentioned below separately for Android or iOS apps. You can refer to sample test repo [here](https://github.com/LambdaTest/LT-appium-java-junit).
 
 # Steps:
 
-You can specify a test as passed or failed by Lambda hooks. The following is an example on how to set test result as passed or failed. If the code reaches exception, then it will be marked as failed, else as passed.
+The following is an example on how to handle permissions in the capabilities in the automation script.
+
 
 ```java
 package com.lambdatest;
@@ -16,10 +17,8 @@ import org.junit.Test;
 import org.openqa.selenium.remote.DesiredCapabilities;
 import org.openqa.selenium.remote.RemoteWebDriver;
 import org.openqa.selenium.By;
-
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
-
 import java.net.MalformedURLException;
 import java.net.URL;
 
@@ -30,8 +29,7 @@ public class android {
             : System.getenv("LT_ACCESS_KEY");
     public static RemoteWebDriver driver = null;
     public String gridURL = "@mobile-hub.lambdatest.com/wd/hub";
-    
-    //MARKING DEFAULT STATUS AS PASSED
+
     public String status = "passed";
     
     @Before
@@ -41,7 +39,7 @@ public class android {
         capabilities.setCapability("build", "JUNIT Native App automation");
         capabilities.setCapability("name", "Java JUnit Android Pixel 6");
         capabilities.setCapability("platformName", "android");
-        capabilities.setCapability("deviceName", "Pixel 6");
+        capabilities.setCapability("deviceName", "Pixel 6"); //Enter the name of the device here
         capabilities.setCapability("isRealMobile", true);
         capabilities.setCapability("platformVersion","12");
         capabilities.setCapability("app","App_ID"); //Enter the App ID here
@@ -49,6 +47,17 @@ public class android {
         capabilities.setCapability("console",true);
         capabilities.setCapability("network",true);
         capabilities.setCapability("visual",true);
+        
+        //GRANT PERMISSIONS FOR ANDROID
+        capabilities.setCapability("autoGrantPermissions", true);
+
+        //ACCEPT ALERTS FOR IOS
+        capabilities.setCapability("autoAcceptAlerts", true);
+
+        //DISMISS ALERTS FOR IOS
+        capabilities.setCapability("autoDismissAlerts", false);
+
+        
         try
         {
             driver = new RemoteWebDriver(new URL("https://" + username + ":" + accessKey + gridURL), capabilities);
@@ -78,14 +87,11 @@ public class android {
 
             wait.until(ExpectedConditions.elementToBeClickable(MobileBy.id("toast"))).click();
 
-            //MARKING STATUS AS PASSED
             status="passed"; 
         }
             catch (Exception e)
              {
                 System.out.println(e.getMessage());
-                
-                //MARKING STATUS AS FAILED
                 status="failed";
              }
     }
@@ -111,12 +117,10 @@ mvn clean
 
 The tests can be executed in the terminal using the following command:
 
-Android:
 ```bash
 mvn test android.java
 ```
 
-iOS:
 ```bash
 mvn test ios.java
 ```
@@ -171,4 +175,4 @@ To stay updated with the latest features and product add-ons, visit [Changelog](
 ## We are here to help you :headphones:
 
 * Got a query? we are available 24x7 to help. [Contact Us](support@lambdatest.com)
-* For more info, visit - [LambdaTest](https://www.lambdatest.com/?utm_source=github&utm_medium=repo&utm_campaign=LT-appium-python)
+* For more info, visit - [LambdaTest](https://www.lambdatest.com/?utm_source=github&utm_medium=repo&utm_campaign=appium-junit-permissions)
